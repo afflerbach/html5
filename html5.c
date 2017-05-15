@@ -1,5 +1,6 @@
 #include <libxml2/libxml/HTMLtree.h>
 #include <myhtml/myhtml.h>
+#include <myhtml/mynamespace.h>
 
 #include <html5.h>
 
@@ -10,10 +11,19 @@ void addChildren(const xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 xmlNodePtr createDOMElement(const myhtml_tree_t *tree, myhtml_tree_node_t *element) {
+    xmlNsPtr namespace = NULL;
+    myhtml_namespace_t ns;
     myhtml_tag_id_t nodeType = myhtml_node_tag_id(element);
 
-    const char *elementName = myhtml_tag_name_by_id((myhtml_tree_t*) tree, nodeType, NULL);
-    return xmlNewNode(NULL, BAD_CAST elementName);
+    const char *elementName = myhtml_tag_name_by_id((myhtml_tree_t*)tree, nodeType, NULL);
+
+    ns = myhtml_node_namespace(element);
+    if (ns != MyHTML_NAMESPACE_UNDEF && ns != MyHTML_NAMESPACE_HTML) {
+        const char *namespaceURI = myhtml_namespace_url_by_id(ns, NULL);
+        namespace = xmlNewNs(NULL, BAD_CAST namespaceURI, NULL);
+    }
+
+        return xmlNewNode(namespace, BAD_CAST elementName);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
