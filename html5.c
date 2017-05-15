@@ -113,6 +113,16 @@ void addChildren(const xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+void setEncoding(xmlDocPtr document, const char *encoding) {
+    if (document->encoding != NULL) {
+        xmlFree((xmlChar *) document->encoding);
+    }
+
+    document->encoding = xmlStrdup((const xmlChar *) encoding);
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 xmlDocPtr parseHTML5(const char *html, size_t length) {
     myhtml_t *myhtml;
     myhtml_tree_t *tree;
@@ -129,6 +139,7 @@ xmlDocPtr parseHTML5(const char *html, size_t length) {
     rootNode = myhtml_node_child(myhtml_tree_get_document(tree));
 
     document = xmlNewDoc(BAD_CAST "1.0");
+    setEncoding(document, "UTF-8");
     xmlCreateIntSubset(document, BAD_CAST "html", NULL, NULL);
     addChildren((xmlNodePtr) document, tree, rootNode);
 
