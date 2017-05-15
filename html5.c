@@ -4,6 +4,11 @@
 
 #include <html5.h>
 
+static const char *attributeNamespacePrefixes[MyHTML_NAMESPACE_LAST_ENTRY][2] = {
+    [MyHTML_NAMESPACE_XMLNS] = { "xmlns", "http://www.w3.org/2000/xmlns/" },
+    [MyHTML_NAMESPACE_XLINK] = { "xlink", "http://www.w3.org/1999/xlink" }
+};
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 void addChildren(const xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_tree_node_t *children);
@@ -23,7 +28,26 @@ xmlNodePtr createDOMElement(const myhtml_tree_t *tree, myhtml_tree_node_t *eleme
         namespace = xmlNewNs(NULL, BAD_CAST namespaceURI, NULL);
     }
 
-        return xmlNewNode(namespace, BAD_CAST elementName);
+    return xmlNewNode(namespace, BAD_CAST elementName);
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+xmlNsPtr createAttributeNamespace(myhtml_tree_attr_t *attribute) {
+
+    myhtml_namespace_t ns = myhtml_attribute_namespace(attribute);
+    if (ns == MyHTML_NAMESPACE_UNDEF || ns == MyHTML_NAMESPACE_HTML) {
+        return NULL;
+    }
+
+    const char *namespaceURI = myhtml_namespace_url_by_id(ns, NULL);
+    const char *namespacePrefix = NULL;
+
+    if (ns != MyHTML_NAMESPACE_XMLNS || strcmp(myhtml_attribute_key(attribute, NULL), "xmlns") != 0) {
+        namespacePrefix = attributeNamespacePrefixes[ns][0];
+    }
+
+    return xmlNewNs(NULL, BAD_CAST namespaceURI, BAD_CAST namespacePrefix);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -31,9 +55,11 @@ xmlNodePtr createDOMElement(const myhtml_tree_t *tree, myhtml_tree_node_t *eleme
 void addAttributes(xmlNodePtr domElement, myhtml_tree_attr_t *attributes) {
     myhtml_tree_attr_t *attribute = attributes;
     while (attribute) {
+        xmlNsPtr namespace = createAttributeNamespace(attribute);
+
         const char *name = myhtml_attribute_key(attribute, NULL);
         const char *value = myhtml_attribute_value(attribute, NULL);
-        xmlAttrPtr domAttr = xmlNewProp(domElement, BAD_CAST name, BAD_CAST value);
+        xmlAttrPtr domAttr = xmlNewNsProp(domElement, namespace, BAD_CAST name, BAD_CAST value);
 
         if (strcmp(name, "id") == 0) {
             xmlAddID(NULL, domElement->doc, BAD_CAST value, domAttr);
