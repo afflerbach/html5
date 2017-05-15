@@ -23,7 +23,11 @@ void addAttributes(xmlNodePtr domElement, myhtml_tree_attr_t *attributes) {
     while (attribute) {
         const char *name = myhtml_attribute_key(attribute, NULL);
         const char *value = myhtml_attribute_value(attribute, NULL);
-        xmlNewProp(domElement, BAD_CAST name, BAD_CAST value);
+        xmlAttrPtr domAttr = xmlNewProp(domElement, BAD_CAST name, BAD_CAST value);
+
+        if (strcmp(name, "id") == 0) {
+            xmlAddID(NULL, domElement->doc, BAD_CAST value, domAttr);
+        }
 
         attribute = myhtml_attribute_next(attribute);
     }
