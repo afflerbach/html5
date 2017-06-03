@@ -113,6 +113,17 @@ void addChildren(const xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+myencoding_t getEncoding(const char *encoding) {
+    myencoding_t result = MyENCODING_UTF_8;
+
+    if (encoding && *encoding) {
+        myencoding_by_name(encoding, strlen(encoding), &result);
+    }
+    return result;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 void setEncoding(xmlDocPtr document, const char *encoding) {
     if (document->encoding != NULL) {
         xmlFree((xmlChar *) document->encoding);
@@ -123,23 +134,26 @@ void setEncoding(xmlDocPtr document, const char *encoding) {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-xmlDocPtr parseHTML5(const char *html, size_t length) {
+xmlDocPtr parseHTML5(const char *html, size_t length, const char* encoding) {
     myhtml_t *myhtml;
     myhtml_tree_t *tree;
     myhtml_tree_node_t *rootNode;
     xmlDocPtr document;
+    myencoding_t treeEncoding;
 
     myhtml = myhtml_create();
     myhtml_init(myhtml, MyHTML_OPTIONS_DEFAULT, 1, 0);
 
     tree = myhtml_tree_create();
     myhtml_tree_init(tree, myhtml);
-    myhtml_parse(tree, MyENCODING_UTF_8, html, length);
+
+    treeEncoding = getEncoding(encoding);
+    myhtml_parse(tree, treeEncoding, html, length);
 
     rootNode = myhtml_node_child(myhtml_tree_get_document(tree));
 
     document = xmlNewDoc(BAD_CAST "1.0");
-    setEncoding(document, "UTF-8");
+    setEncoding(document, myencoding_name_by_id(treeEncoding, NULL));
     xmlCreateIntSubset(document, BAD_CAST "html", NULL, NULL);
     addChildren((xmlNodePtr) document, tree, rootNode);
 

@@ -42,15 +42,15 @@ ZEND_GET_MODULE(html5)
 /* ========================================================================= */
 
 PHP_FUNCTION(html5_parse) {
-    char *html;
-    size_t html_len;
+    char *html, *encoding;
+    size_t html_len, encoding_len;
     int ret;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &html, &html_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|s", &html, &html_len, &encoding, &encoding_len) == FAILURE) {
         return;
     }
 
-    xmlDocPtr document = parseHTML5((const char*) html, html_len);
+    xmlDocPtr document = parseHTML5((const char*) html, html_len, (const char*) encoding);
 
     DOM_RET_OBJ((xmlNodePtr) document, &ret, NULL);
 }
