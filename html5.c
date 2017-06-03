@@ -1,6 +1,6 @@
 #include <ctype.h>
 
-#include <libxml2/libxml/HTMLtree.h>
+#include <libxml/HTMLtree.h>
 #include <myhtml/myhtml.h>
 #include <myhtml/mynamespace.h>
 

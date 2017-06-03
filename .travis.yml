@@ -16,4 +16,4 @@ install:
 script:
     - phpize
     - ./configure && make
-    - make NO_INTERACTION=1 REPORT_EXIT_STATUS=1 test || cat tests/*.log && false
+    - make NO_INTERACTION=1 REPORT_EXIT_STATUS=1 TRAVIS_CI=0 test || (cat tests/*.log && false)
