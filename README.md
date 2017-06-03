@@ -1,5 +1,7 @@
 # html5
 
+[![Build Status](https://travis-ci.org/afflerbach/html5.svg?branch=master)](https://travis-ci.org/afflerbach/html5)
+
 `html5` is an extension for [PHP](https://github.com/php/php-src) bringing a
 [fast HTML5 compatible parser](https://github.com/lexborisov/myhtml) to PHP.
 
