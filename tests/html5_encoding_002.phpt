@@ -6,7 +6,7 @@ Parsed with encoding
 <?php
 var_dump(html5_parse("<html>Köln</html>")->saveHTML());
 var_dump(html5_parse("<html>Köln</html>", 'utf-8')->saveHTML());
-var_dump(html5_parse("<html>K\xF6ln</html>", 'ISO-8859-1')->saveHTML());
+var_dump(html5_parse("<html>K\xF6ln</html>", ' Iso-8859-1 ')->saveHTML());
 var_dump(html5_parse("<html>K\xF6ln</html>", 'Windows-1252')->saveHTML());
 ?>
 --EXPECT--

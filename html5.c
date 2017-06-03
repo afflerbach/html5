@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include <libxml2/libxml/HTMLtree.h>
 #include <myhtml/myhtml.h>
 #include <myhtml/mynamespace.h>
@@ -8,6 +10,21 @@ static const char *attributeNamespacePrefixes[MyHTML_NAMESPACE_LAST_ENTRY][2] = 
     [MyHTML_NAMESPACE_XMLNS] = { "xmlns", "http://www.w3.org/2000/xmlns/" },
     [MyHTML_NAMESPACE_XLINK] = { "xlink", "http://www.w3.org/1999/xlink" }
 };
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+char *trim(char *str) {
+    while (isspace((unsigned char) *str)) str++;
+
+    if (*str) {
+        char *end = str;
+        while (*end) end++;
+        while (isspace((unsigned char) *(--end)));
+        end[1] = '\0';
+    }
+
+    return str;
+}
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -117,7 +134,8 @@ myencoding_t getEncoding(const char *encoding) {
     myencoding_t result = MyENCODING_UTF_8;
 
     if (encoding && *encoding) {
-        myencoding_by_name(encoding, strlen(encoding), &result);
+        const char *trimmedEncoding = trim((char*) encoding);
+        myencoding_by_name(trimmedEncoding, strlen(trimmedEncoding), &result);
     }
     return result;
 }
