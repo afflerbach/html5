@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - '7.0'
+  - '7.1'
+  - nightly
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libxml2-dev
+
+install:
+  - git clone https://github.com/lexborisov/myhtml.git
+  - pushd myhtml && make prefix=/usr && sudo make install && popd
+
+script:
+    - phpize
+    - ./configure && make
+    - make NO_INTERACTION=1 REPORT_EXIT_STATUS=1 test || cat tests/*.log && false
