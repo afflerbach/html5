@@ -8,6 +8,6 @@ $html = '<math><msqrt><mi>x</mi></msqrt></math>';
 var_dump(html5_parse($html)->saveHTML());
 ?>
 --EXPECT--
-string(94) "<!DOCTYPE html>
-<html><head></head><body><math><msqrt><mi>x</mi></msqrt></math></body></html>
+string(161) "<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><math><msqrt><mi>x</mi></msqrt></math></body></html>
 "

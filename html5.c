@@ -32,6 +32,19 @@ void addChildren(const xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+void addMetaCharsetElement(xmlNodePtr headElement, const char* encoding) {
+    xmlNodePtr meta = xmlNewNode(NULL, BAD_CAST "meta");
+    xmlChar *content = xmlStrncatNew(BAD_CAST "text/html; charset=", BAD_CAST encoding, -1);
+
+    xmlNewProp(meta, BAD_CAST "http-equiv", BAD_CAST "Content-Type");
+    xmlNewProp(meta, BAD_CAST "content",    content);
+    xmlAddChild(headElement, meta);
+
+    xmlFree(content);
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 xmlNodePtr createDOMElement(const myhtml_tree_t *tree, myhtml_tree_node_t *element) {
     xmlNsPtr namespace = NULL;
     myhtml_namespace_t ns;
@@ -99,6 +112,13 @@ void addElement(xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_tree_no
     }
 
     addAttributes(domElement, myhtml_node_attribute_first(element));
+
+    myhtml_tag_id_t nodeType = myhtml_node_tag_id(element);
+
+    if (nodeType == MyHTML_TAG_HEAD) {
+        addMetaCharsetElement(domElement, (const char*) document->encoding);
+    }
+
     addChildren(domElement, tree, myhtml_node_child(element));
 }
 

@@ -11,7 +11,7 @@ var_dump($document->saveHTML());
 var_dump($document->getElementsByTagName('image')[0]->getAttributeNS($xlinkNS, 'href'));
 ?>
 --EXPECT--
-string(142) "<!DOCTYPE html>
-<html><head></head><body><svg xmlns:xlink="http://www.w3.org/1999/xlink"><image xlink:href="..."></image></svg></body></html>
+string(209) "<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><svg xmlns:xlink="http://www.w3.org/1999/xlink"><image xlink:href="..."></image></svg></body></html>
 "
 string(3) "..."

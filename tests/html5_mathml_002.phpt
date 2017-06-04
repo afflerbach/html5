@@ -29,15 +29,15 @@ var_dump($document->getElementsByTagName('msqrt')[0]->namespaceURI);
 var_dump($document->getElementsByTagName('mi')[0]->namespaceURI);
 ?>
 --EXPECT--
-string(94) "<!DOCTYPE html>
-<html><head></head><body><math><msqrt><mi>x</mi></msqrt></math></body></html>
+string(161) "<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><math><msqrt><mi>x</mi></msqrt></math></body></html>
 "
 NULL
 string(34) "http://www.w3.org/1998/Math/MathML"
 string(34) "http://www.w3.org/1998/Math/MathML"
 string(34) "http://www.w3.org/1998/Math/MathML"
-string(106) "<!DOCTYPE html>
-<html><head></head><body><math xmlns="foo"><msqrt><mi>x</mi></msqrt></math></body></html>
+string(173) "<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><math xmlns="foo"><msqrt><mi>x</mi></msqrt></math></body></html>
 "
 NULL
 string(34) "http://www.w3.org/1998/Math/MathML"
