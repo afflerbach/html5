@@ -150,14 +150,19 @@ void addChildren(const xmlNodePtr parentNode, const myhtml_tree_t *tree, myhtml_
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-myencoding_t getEncoding(const char *encoding) {
-    myencoding_t result = MyENCODING_UTF_8;
+myencoding_t determineEncoding(const char *encoding, const char *html, size_t length) {
+    myencoding_t result = MyENCODING_NOT_DETERMINED;
 
     if (encoding && *encoding) {
         const char *trimmedEncoding = trim((char*) encoding);
         myencoding_by_name(trimmedEncoding, strlen(trimmedEncoding), &result);
     }
-    return result;
+
+    if (result == MyENCODING_NOT_DETERMINED) {
+        result = myencoding_prescan_stream_to_determine_encoding(html, length);
+    }
+
+    return result == MyENCODING_NOT_DETERMINED ? MyENCODING_UTF_8 : result;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -185,7 +190,7 @@ xmlDocPtr parseHTML5(const char *html, size_t length, const char* encoding) {
     tree = myhtml_tree_create();
     myhtml_tree_init(tree, myhtml);
 
-    treeEncoding = getEncoding(encoding);
+    treeEncoding = determineEncoding(encoding, html, length);
     myhtml_parse(tree, treeEncoding, html, length);
 
     rootNode = myhtml_node_child(myhtml_tree_get_document(tree));
