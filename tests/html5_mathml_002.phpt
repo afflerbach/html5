@@ -1,6 +1,6 @@
 --TEST--
 MathML namespace: https://www.w3.org/TR/MathML/chapter2.html#interf.namespace
-
+--DESCRIPTION--
 HTML does not support namespace extensibility in the same way, the HTML parser
 has in-built knowledge of the HTML, SVG and MathML namespaces. 
 xmlns attributes are just treated as normal attributes. 
