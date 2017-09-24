@@ -10,7 +10,7 @@ try {
 
     $html = $file === '-' ? readFromStdin() : readFromFile($file);
     $document = html5_parse($html);
-    print($document->saveHTML() . "\n");
+    print(html5_dump($document) . "\n");
 } catch (Throwable $e) {
     fprintf(STDERR, $e->getMessage() . "\n");
     exit(1);

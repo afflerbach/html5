@@ -18,5 +18,5 @@ if test "$PHP_HTML5" != "no" ; then
     CFLAGS+=' -std=c99 -Wall -pedantic -I/usr/local/include/libxml2 -I/usr/include/libxml2 -Wl,-lmyhtml -Wl,-lxml2'
 
     PHP_ARG_ANALYZE_EX([$PHP_HTML5])
-    PHP_NEW_EXTENSION(html5, php_html5.c html5.c, $ext_shared)
+    PHP_NEW_EXTENSION(html5, php_html5.c html5.c dump.c, $ext_shared)
 fi
