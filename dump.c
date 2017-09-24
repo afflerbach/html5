@@ -2,6 +2,8 @@
 #include <libxml/HTMLtree.h>
 #include <libxml/xmlstring.h>
 
+#define SVG_NS "http://www.w3.org/2000/svg"
+
 // https://www.w3.org/TR/html5/syntax.html#elements-0
 static const char *voidElements[26][2] = {
     ['a' - 97] = { "area", "" },
@@ -17,6 +19,10 @@ static const char *voidElements[26][2] = {
     ['s' - 97] = { "source" "" },
     ['t' - 97] = { "track" "" },
     ['w' - 97] = { "wbr" "" },
+};
+
+const char *selfClosingSVGElements[1] = {
+    "image"
 };
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -35,6 +41,24 @@ int isVoidElement(xmlNodePtr element) {
             }
         }
     }
+    return 0;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+ int isSelfClosingForeignElement(xmlNodePtr element) {
+    xmlNsPtr namespace = element->ns;
+     if (namespace && xmlStrcmp(namespace->href, BAD_CAST SVG_NS) == 0) {
+
+        const char *elementName = (const char*) element->name;
+
+        for (int i = 0; i < 1; i++) {
+            if (strcmp(elementName, selfClosingSVGElements[i]) == 0) {
+                return 1;
+            }
+        }
+    }
+
     return 0;
 }
 
@@ -104,6 +128,11 @@ void dumpElement(xmlNodePtr element, smart_str *buffer) {
     smart_str_appends(buffer, (const char*) element->name);
 
     dumpAttributes(element->properties, buffer);
+
+    if (isSelfClosingForeignElement(element)) {
+        smart_str_appends(buffer, "/>");
+        return;
+    }
 
     smart_str_appendc(buffer, '>');
 
