@@ -1,5 +1,43 @@
 #include <zend_smart_str.h>
 #include <libxml/HTMLtree.h>
+#include <libxml/xmlstring.h>
+
+// https://www.w3.org/TR/html5/syntax.html#elements-0
+static const char *voidElements[26][2] = {
+    ['a' - 97] = { "area", "" },
+    ['b' - 97] = { "br", "base" },
+    ['c' - 97] = { "col", "" },
+    ['e' - 97] = { "embed" "" },
+    ['h' - 97] = { "hr", "" },
+    ['i' - 97] = { "img", "input" },
+    ['k' - 97] = { "keygen", "" },
+    ['l' - 97] = { "link", "" },
+    ['m' - 97] = { "meta", "" },
+    ['p' - 97] = { "param" "" },
+    ['s' - 97] = { "source" "" },
+    ['t' - 97] = { "track" "" },
+    ['w' - 97] = { "wbr" "" },
+};
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+int isVoidElement(xmlNodePtr element) {
+    const char *elementName = (const char*) element->name;
+
+    if (elementName[0]) {
+        char **elementNames = (char**) voidElements[elementName[0] - 97];
+
+        if (*elementNames) {
+            for (int i = 0; i < 2; i++) {
+                if (elementNames[i] && strcmp(elementName, elementNames[i]) == 0) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -68,6 +106,10 @@ void dumpElement(xmlNodePtr element, smart_str *buffer) {
     dumpAttributes(element->properties, buffer);
 
     smart_str_appendc(buffer, '>');
+
+    if (isVoidElement(element)) {
+        return;
+    }
 
     dumpNodes(element->children, buffer);
 
