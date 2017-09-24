@@ -21,6 +21,12 @@ void dumpAttribute(xmlAttrPtr attribute, smart_str *buffer) {
         return;
     }
 
+    xmlNsPtr namespace = attribute->ns;
+    if (namespace != NULL && namespace->prefix != NULL) {
+        smart_str_appends(buffer, (const char*) namespace->prefix);
+        smart_str_appendc(buffer, ':');
+    }
+
     smart_str_appends(buffer, (const char*) attribute->name);
     if (attribute->children == NULL) {
         return;
